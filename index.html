@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vanilla todo list</title>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script>
+      const app = document.querySelector("#app");
+
+      let state = {
+        items: ["title1", "title2", "title3"],
+      };
+
+      const setState = (newState, focusTo) => {
+        state = { ...state, ...newState };
+        render();
+      };
+
+      const render = () => {
+        // * HTML 삽입
+        const listElement = (items) =>
+          `<ul>${items
+            .map(
+              (item, index) =>
+                `<li class='list_item'><p>${item}</p><button id='removeItem_${index}'>done</button></li>`
+            )
+            .join("")}</ul>`;
+        const buttonElement = "<button id='addItem'>add item</button>";
+        const inputElement = `<input id='textInput' type='text' />`;
+
+        let inputValue = "";
+
+        app.innerHTML = `
+        ${listElement(state.items) + buttonElement + inputElement}
+        `;
+
+        // add remove item event listener
+        for (let i = 0; i < state.items.length; i++) {
+          document
+            .getElementById(`removeItem_${i}`)
+            .addEventListener("click", () => {
+              const newItems = state.items.filter((item, index) => index !== i);
+              setState({ items: newItems });
+            });
+        }
+
+        document.getElementById("addItem").addEventListener("click", () => {
+          setState({
+            items: [...state.items, inputValue],
+          });
+        });
+
+        document
+          .getElementById("textInput")
+          .addEventListener("keydown", (event) => {
+            focusToTextInput = "textInput";
+
+            if (event.key === "Enter") {
+              setState({
+                items: [...state.items, event.target.value],
+              });
+            } else {
+              inputValue = event.target.value;
+            }
+          });
+      };
+
+      render();
+    </script>
+    <style>
+      .list_item {
+        display: grid;
+        width: 500px;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        border-bottom: 1px solid lightslategray;
+      }
+      .list_item:last-child {
+        border-bottom: none;
+      }
+      .list_item button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 20px;
+      }
+    </style>
+  </body>
+</html>
